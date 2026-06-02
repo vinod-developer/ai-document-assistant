@@ -1,12 +1,11 @@
 package com.vinod.aidocumentassistant.controller;
 
+import com.vinod.aidocumentassistant.model.QuestionRequest;
+import com.vinod.aidocumentassistant.model.QuestionResponse;
 import com.vinod.aidocumentassistant.service.DocumentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -23,13 +22,19 @@ public class DocumentController {
     @PostMapping("/upload")
     public ResponseEntity<Map<String, String>> upload(@RequestParam("file") MultipartFile file) throws IOException {
 
-        documentService.save(file);
+        String extractedText =
+                documentService.saveAndExtract(file);
 
         return ResponseEntity.ok(
-                Map.of(
-                        "message",
-                        file.getOriginalFilename() + " uploaded successfully")
-        );
+                Map.of("content", extractedText));
     }
 
+    @PostMapping("/question")
+    public QuestionResponse askQuestion(@RequestBody QuestionRequest request) {
+
+        return new QuestionResponse(
+                "Received question: " + request.question()
+        );
+
+    }
 }

@@ -1,5 +1,8 @@
 package com.vinod.aidocumentassistant.service;
 
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,7 +17,7 @@ public class DocumentService {
 
     private static final String UPLOAD_DIR = "uploads";
 
-    public void save(MultipartFile file) throws IOException {
+    public String saveAndExtract(MultipartFile file) throws IOException {
 
         Path uploadPath = Paths.get(UPLOAD_DIR);
 
@@ -29,5 +32,19 @@ public class DocumentService {
                 filePath,
                 StandardCopyOption.REPLACE_EXISTING
         );
+        return extractText(filePath);
+
+    }
+
+
+
+    public String extractText(Path filePath) throws IOException {
+
+        try (PDDocument document = Loader.loadPDF(filePath.toFile())) {
+
+            PDFTextStripper stripper = new PDFTextStripper();
+
+            return stripper.getText(document);
+        }
     }
 }
