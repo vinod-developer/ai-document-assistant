@@ -17,6 +17,8 @@ public class DocumentService {
 
     private static final String UPLOAD_DIR = "uploads";
 
+
+
     public String saveAndExtract(MultipartFile file) throws IOException {
 
         Path uploadPath = Paths.get(UPLOAD_DIR);
@@ -47,4 +49,6 @@ public class DocumentService {
             return stripper.getText(document);
         }
     }
+
+
 }

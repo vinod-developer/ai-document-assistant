@@ -1,8 +1,9 @@
 package com.vinod.aidocumentassistant.controller;
 
 import com.vinod.aidocumentassistant.model.QuestionRequest;
-import com.vinod.aidocumentassistant.model.QuestionResponse;
+import com.vinod.aidocumentassistant.service.AiService;
 import com.vinod.aidocumentassistant.service.DocumentService;
+import com.vinod.aidocumentassistant.service.DocumentStoreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,23 +19,46 @@ public class DocumentController {
 
     private final DocumentService documentService;
 
+    private final DocumentStoreService documentStoreService;
+
+    private final AiService aiService;
+
+
 
     @PostMapping("/upload")
     public ResponseEntity<Map<String, String>> upload(@RequestParam("file") MultipartFile file) throws IOException {
 
-        String extractedText =
+        String content =
                 documentService.saveAndExtract(file);
 
+        documentStoreService.save(content);
+
+
         return ResponseEntity.ok(
-                Map.of("content", extractedText));
+                Map.of(
+                        "message",
+                        file.getOriginalFilename() + " uploaded successfully"
+                )
+        );
     }
 
     @PostMapping("/question")
-    public QuestionResponse askQuestion(@RequestBody QuestionRequest request) {
+    public ResponseEntity<Map<String, String>> askQuestion(
+            @RequestBody QuestionRequest request) {
 
-        return new QuestionResponse(
-                "Received question: " + request.question()
+        String documentContent =
+                documentStoreService.getDocumentContent();
+
+        String answer =
+                aiService.askQuestion(
+                        documentContent,
+                        request.question()
+                );
+
+        return ResponseEntity.ok(
+                Map.of("answer", answer)
         );
+
 
     }
 }
