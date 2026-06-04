@@ -13,6 +13,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.Map;
 
+import io.swagger.v3.oas.annotations.Parameter;
+import org.springframework.http.MediaType;
+
 @RestController
 @RequestMapping("/api/documents")
 @RequiredArgsConstructor
@@ -24,10 +27,14 @@ public class DocumentController {
 
     private final AiService aiService;
 
-
-
-    @PostMapping("/upload")
-    public ResponseEntity<UploadResponse> upload(@RequestParam("file") MultipartFile file) throws IOException {
+    @PostMapping(
+            value = "/upload",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
+    public ResponseEntity<UploadResponse> upload(
+            @Parameter(description = "PDF file")
+            @RequestParam("file") MultipartFile file)
+            throws IOException {
 
         String content =
                 documentService.saveAndExtract(file);
