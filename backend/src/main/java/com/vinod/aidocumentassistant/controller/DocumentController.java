@@ -32,10 +32,13 @@ public class DocumentController {
         String content =
                 documentService.saveAndExtract(file);
 
-        documentStoreService.save(content);
-
         String documentId =
-                documentStoreService.save(content);
+                documentStoreService.save(
+                        file.getOriginalFilename(),
+                        content
+                );
+
+
 
         return ResponseEntity.ok(
                 new UploadResponse(
