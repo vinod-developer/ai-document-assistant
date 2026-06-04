@@ -1,6 +1,7 @@
 package com.vinod.aidocumentassistant.controller;
 
 import com.vinod.aidocumentassistant.model.QuestionRequest;
+import com.vinod.aidocumentassistant.model.UploadResponse;
 import com.vinod.aidocumentassistant.service.AiService;
 import com.vinod.aidocumentassistant.service.DocumentService;
 import com.vinod.aidocumentassistant.service.DocumentStoreService;
@@ -26,28 +27,44 @@ public class DocumentController {
 
 
     @PostMapping("/upload")
-    public ResponseEntity<Map<String, String>> upload(@RequestParam("file") MultipartFile file) throws IOException {
+    public ResponseEntity<UploadResponse> upload(@RequestParam("file") MultipartFile file) throws IOException {
 
         String content =
                 documentService.saveAndExtract(file);
 
         documentStoreService.save(content);
 
+        String documentId =
+                documentStoreService.save(content);
 
         return ResponseEntity.ok(
-                Map.of(
-                        "message",
-                        file.getOriginalFilename() + " uploaded successfully"
+                new UploadResponse(
+                        documentId,
+                        file.getOriginalFilename()
+                                + " uploaded successfully"
                 )
         );
     }
+
 
     @PostMapping("/question")
     public ResponseEntity<Map<String, String>> askQuestion(
             @RequestBody QuestionRequest request) {
 
         String documentContent =
-                documentStoreService.getDocumentContent();
+                documentStoreService.getDocumentContent(
+                        request.documentId()
+                );
+        if (documentContent == null) {
+
+            return ResponseEntity.badRequest()
+                    .body(
+                            Map.of(
+                                    "error",
+                                    "Document not found"
+                            )
+                    );
+        }
 
         String answer =
                 aiService.askQuestion(
@@ -56,9 +73,10 @@ public class DocumentController {
                 );
 
         return ResponseEntity.ok(
-                Map.of("answer", answer)
+                Map.of(
+                        "answer",
+                        answer
+                )
         );
-
-
     }
 }

@@ -1,7 +1,7 @@
 package com.vinod.aidocumentassistant.model;
 
-public record QuestionRequest(
+public record UploadResponse(
         String documentId,
-        String question
+        String message
 ) {
 }
