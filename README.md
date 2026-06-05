@@ -1,3 +1,7 @@
+# AI Document Assistant
+
+An AI-powered document assistant built with Spring Boot, PostgreSQL, and Gemini AI. The application implements a Retrieval-Augmented Generation (RAG) pipeline that enables users to upload PDF documents and ask natural language questions, returning context-aware answers based on document content.
+
 ## Features
 
 * Upload and process PDF documents
