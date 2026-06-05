@@ -41,7 +41,7 @@ public class GeminiServiceImpl implements AiService {
     }
 
     private String buildPrompt(
-            String documentContent,
+            String context,
             String question) {
 
         return """
@@ -60,7 +60,7 @@ public class GeminiServiceImpl implements AiService {
                 QUESTION:
                 %s
                 """.formatted(
-                documentContent,
+                context,
                 question
         );
     }
