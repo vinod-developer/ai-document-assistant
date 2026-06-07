@@ -2,6 +2,8 @@ package com.vinod.aidocumentassistant.repository;
 
 import com.vinod.aidocumentassistant.model.DocumentChunk;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -12,4 +14,19 @@ public interface DocumentChunkRepository
 
     List<DocumentChunk>
     findByDocumentId(String documentId);
+
+    @Query(
+            value = """
+                    SELECT *
+                    FROM document_chunks
+                    WHERE document_id = :documentId
+                    ORDER BY embedding_vector <=> CAST(:questionEmbedding AS vector)
+                    LIMIT 3
+                    """,
+            nativeQuery = true
+    )
+    List<DocumentChunk> findTopRelevantChunks(
+            @Param("documentId") String documentId,
+            @Param("questionEmbedding") String questionEmbedding
+    );
 }

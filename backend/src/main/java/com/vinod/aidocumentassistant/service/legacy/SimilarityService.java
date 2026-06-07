@@ -1,4 +1,4 @@
-package com.vinod.aidocumentassistant.service;
+package com.vinod.aidocumentassistant.service.legacy;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,8 +11,28 @@ import org.springframework.stereotype.Service;
 import java.util.Comparator;
 import java.util.List;
 
-@Service
-@RequiredArgsConstructor
+
+/**
+ * LEGACY IMPLEMENTATION
+ *
+ * This service was used before pgvector migration.
+ *
+ * Retrieval flow:
+ * Question Embedding
+ *      ↓
+ * Java Cosine Similarity
+ *      ↓
+ * Top 3 Chunks
+ *
+ * Replaced by native pgvector search:
+ *
+ * ORDER BY embedding_vector <=> query_vector
+ *
+ * Kept for learning/reference purposes.
+ */
+@Deprecated
+//@Service
+//@RequiredArgsConstructor
 @Slf4j
 public class SimilarityService {
 

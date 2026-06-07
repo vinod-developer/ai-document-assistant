@@ -15,7 +15,7 @@ public class RetrievalService {
 
     private final EmbeddingService embeddingService;
 
-    private final SimilarityService similarityService;
+//    private final SimilarityService similarityService;
 
     private final DocumentChunkRepository chunkRepository;
 
@@ -28,7 +28,7 @@ public class RetrievalService {
                         question
                 );
 
-        List<DocumentChunk> chunks =
+       /* List<DocumentChunk> chunks =
                 chunkRepository.findByDocumentId(
                         documentId
                 );
@@ -37,21 +37,52 @@ public class RetrievalService {
                 similarityService.findTopChunks(
                         questionEmbedding,
                         chunks
-                );
+                );*/
 
-        StringBuilder context =
-                new StringBuilder();
+
+        List<DocumentChunk> topChunks =
+                chunkRepository
+                        .findTopRelevantChunks(
+                                documentId,
+                                questionEmbedding
+                        );
+
+        log.info(
+                "pgvector returned {} chunks",
+                topChunks.size()
+        );
+
+        StringBuilder context = new StringBuilder();
 
         for (DocumentChunk chunk : topChunks) {
 
-            context.append(
-                    chunk.getChunkText()
-            );
-
+            context.append(chunk.getChunkText());
             context.append("\n\n");
         }
-        log.info("===== RETRIEVED CONTEXT =====");
-        log.info(context.toString());
+
+        log.info("===== RETRIEVED CONTEXT FROM PGVECTOR =====");
+        log.info("Number of chunks retrieved: {}", topChunks.size());
+
+        for (int i = 0; i < topChunks.size(); i++) {
+
+            log.info(
+                    "Chunk {} Preview: {}",
+                    i + 1,
+                    topChunks.get(i)
+                            .getChunkText()
+                            .substring(
+                                    0,
+                                    Math.min(
+                                            150,
+                                            topChunks.get(i)
+                                                    .getChunkText()
+                                                    .length()
+                                    )
+                            )
+            );
+        }
+
+        log.debug("Full Context:\n{}", context);
 
         return context.toString();
     }
