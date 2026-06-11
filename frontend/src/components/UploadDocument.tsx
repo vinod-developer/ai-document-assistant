@@ -1,108 +1,130 @@
 import { useState } from "react";
 import api from "../api/documentApi";
+import Chip from "@mui/material/Chip";
 
-function UploadDocument() {
+import {
+    Alert,
+    Box,
+    Button,
+    Card,
+    CardContent,
+    CircularProgress,
+    Typography,
+} from "@mui/material";
 
-    const [file, setFile] =
-        useState<File | null>(null);
+type Props = {
+    onUploadSuccess: (documentId: string) => void;
+};
 
-    const [message, setMessage] =
-        useState("");
+function UploadDocument({ onUploadSuccess }: Props) {
+    const [file, setFile] = useState<File | null>(null);
 
-    const [documentId, setDocumentId] =
-        useState("");
+    const [message, setMessage] = useState("");
+
+    const [documentId, setDocumentId] = useState("");
+
+    const [loading, setLoading] = useState(false);
 
     const handleUpload = async () => {
-
         if (!file) {
-
-            alert("Please select a file");
-
             return;
         }
 
-        const formData =
-            new FormData();
+        const formData = new FormData();
 
-        formData.append(
-            "file",
-            file
-        );
+        formData.append("file", file);
+
+        setLoading(true);
 
         try {
+            const response = await api.post("/api/documents/upload", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
 
-            const response =
-                await api.post(
-                    "/api/documents/upload",
-                    formData,
-                    {
-                        headers: {
-                            "Content-Type":
-                                "multipart/form-data"
-                        }
-                    }
-                );
+            const uploadedId = response.data.documentId;
 
-            setDocumentId(
-                response.data.documentId
-            );
+            setDocumentId(uploadedId);
 
-            setMessage(
-                response.data.message
-            );
+            setMessage(response.data.message);
 
+            onUploadSuccess(uploadedId);
         } catch (error) {
-
             console.error(error);
 
-            setMessage(
-                "Upload failed"
-            );
+            setMessage("Upload failed");
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
+        <Card
+            sx={{
+                borderRadius: 3
+            }}
+        >
+            <CardContent>
+                <Typography
+                    variant="h5"
+                    gutterBottom
+                    sx={{
+                        textAlign: "center",
+                    }}
+                >
+                    📄 Upload Document
+                </Typography>
 
-        <div>
+                <Box
+                    sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 2,
+                    }}
+                >
+                    <Button variant="outlined" component="label">
+                        Choose PDF
+                        <input
+                            hidden
+                            type="file"
+                            accept=".pdf"
+                            onChange={(event) =>
+                                setFile(event.target.files?.[0] || null)
+                            }
+                        />
+                    </Button>
 
-            <h2>
-                Upload Document
-            </h2>
+                    {file && (
+                        <Chip
+                            label={file.name}
+                            color="primary"
+                            variant="outlined"
+                        />
+                    )}
 
-            <input
-                type="file"
-                accept=".pdf"
-                onChange={(event) =>
-                    setFile(
-                        event.target.files?.[0]
-                            || null
-                    )
-                }
-            />
+                    <Button
+                        variant="contained"
+                        size="large"
+                        fullWidth
+                        onClick={handleUpload}
+                        disabled={loading}
+                    >
+                        {loading ? (
+                            <CircularProgress size={24} color="inherit" />
+                        ) : (
+                            "Upload"
+                        )}
+                    </Button>
 
-            <br />
-            <br />
+                    {message && <Alert severity="success">{message}</Alert>}
 
-            <button
-                onClick={handleUpload}
-            >
-                Upload
-            </button>
-
-            <p>{message}</p>
-
-            {
-                documentId &&
-                (
-                    <p>
-                        Document ID:
-                        {" "}
-                        {documentId}
-                    </p>
-                )
-            }
-
-        </div>
+                    {documentId && (
+                        <Alert severity="info">Document ID: {documentId}</Alert>
+                    )}
+                </Box>
+            </CardContent>
+        </Card>
     );
 }
 
