@@ -7,6 +7,9 @@ COPY src ./src
 
 RUN mvn clean package -DskipTests
 
+RUN ls -la target
+RUN jar tf target/backend-0.0.1-SNAPSHOT.jar | grep BackendApplication
+
 FROM eclipse-temurin:21-jre
 
 WORKDIR /app
