@@ -1,66 +1,86 @@
 # AI Document Assistant
 
-An AI-powered document assistant built with Spring Boot, PostgreSQL, pgvector, and Gemini AI.
+An AI-powered document question-answering application that allows users to upload PDF documents and ask questions about their content using Retrieval-Augmented Generation (RAG).
 
-The application implements a Retrieval-Augmented Generation (RAG) pipeline that enables users to upload PDF documents and ask natural language questions. It retrieves semantically relevant document chunks using vector search and generates context-aware answers using Gemini.
+Built with Spring Boot, PostgreSQL, pgvector, Gemini AI, React, TypeScript, Material UI, Docker, and Docker Compose.
 
 ---
 
 ## Features
 
-* Upload and process PDF documents
-* Extract text using Apache PDFBox
-* Store documents and metadata in PostgreSQL
-* Automatically chunk large documents
-* Generate embeddings using Gemini Embedding Model
-* Store embeddings as pgvector vectors
-* Perform native vector similarity search using pgvector
-* Retrieve top relevant document chunks
-* Generate answers using Gemini LLM
-* Dockerized Spring Boot backend
-* Docker Compose support
-* Environment variable-based configuration
-* Interactive API documentation with Swagger/OpenAPI
+- Upload PDF documents
+- Extract and process document content
+- Generate embeddings for document chunks
+- Store embeddings in PostgreSQL using pgvector
+- Semantic search using vector similarity
+- Ask questions about uploaded documents
+- Retrieve relevant document context
+- Generate AI-powered answers using Gemini
+- Responsive React frontend
+- Dockerized backend deployment
+- Environment variable based configuration
 
 ---
 
 ## Architecture
 
+```text
++--------------------+
+|   React Frontend   |
++---------+----------+
+          |
+          | REST API
+          |
+          v
++--------------------+
+|   Spring Boot API  |
++---------+----------+
+          |
+          |
+   +------+------+
+   |             |
+   v             v
+
+Gemini AI    PostgreSQL
+               +
+            pgvector
+
+```
+
+### RAG Flow
+
+```text
 PDF Upload
-↓
+    |
+    v
 Text Extraction
-↓
-Document Storage
-↓
-Document Chunking
-↓
-Gemini Embedding Generation
-↓
-PostgreSQL + pgvector Storage
-↓
-Vector Similarity Search
-↓
-Context Retrieval
-↓
-Gemini Answer Generation
+    |
+    v
+Chunking
+    |
+    v
+Embedding Generation
+    |
+    v
+pgvector Storage
 
----
-
-## Retrieval Flow
-
-Question
-↓
+User Question
+    |
+    v
 Question Embedding
-↓
-pgvector Similarity Search
-↓
-Top 3 Relevant Chunks
-↓
-Context Construction
-↓
-Gemini LLM
-↓
-Answer
+    |
+    v
+Vector Similarity Search
+    |
+    v
+Top Matching Chunks
+    |
+    v
+Gemini Prompt
+    |
+    v
+AI Answer
+```
 
 ---
 
@@ -68,35 +88,152 @@ Answer
 
 ### Backend
 
-* Java 21
-* Spring Boot 3
-* Spring Web
-* Spring Data JPA
-* Maven
-
-### Database
-
-* PostgreSQL 17
-* pgvector
+- Java 21
+- Spring Boot 3
+- Spring Web
+- Spring Data JPA
+- PostgreSQL
+- pgvector
+- Maven
 
 ### AI
 
-* Gemini 2.x
-* Gemini Embeddings
-* Retrieval-Augmented Generation (RAG)
+- Google Gemini API
+- Embeddings
+- Retrieval-Augmented Generation (RAG)
 
-### Containerization
+### Frontend
 
-* Docker
-* Docker Compose
+- React
+- TypeScript
+- Vite
+- Material UI
+- Axios
 
-### Documentation
+### DevOps
 
-* Swagger / OpenAPI
+- Docker
+- Docker Compose
 
-### Libraries
+---
 
-* Apache PDFBox
+## Screenshots
+
+### Home Page
+
+_Add screenshot here_
+
+### Upload Document
+
+_Add screenshot here_
+
+### Ask Questions
+
+_Add screenshot here_
+
+---
+
+## Project Structure
+
+```text
+ai-document-assistant
+│
+├── backend
+│   ├── src
+│   ├── Dockerfile
+│   └── pom.xml
+│
+├── frontend
+│   ├── src
+│   ├── public
+│   └── package.json
+│
+└── docker-compose.yml
+```
+
+---
+
+## Running Backend Locally
+
+### Clone Repository
+
+```bash
+git clone https://github.com/vinod-developer/ai-document-assistant.git
+
+cd ai-document-assistant/backend
+```
+
+### Configure Environment Variables
+
+```bash
+GEMINI_API_KEY=your-api-key
+```
+
+### Run Application
+
+```bash
+mvn spring-boot:run
+```
+
+Backend:
+
+```text
+http://localhost:8080
+```
+
+Swagger:
+
+```text
+http://localhost:8080/swagger-ui.html
+```
+
+---
+
+## Running Frontend Locally
+
+```bash
+cd frontend
+
+npm install
+
+npm run dev
+```
+
+Frontend:
+
+```text
+http://localhost:5173
+```
+
+---
+
+## Docker
+
+### Build Image
+
+```bash
+docker build -t ai-document-assistant .
+```
+
+### Run Container
+
+```bash
+docker run -p 8080:8080 ai-document-assistant
+```
+
+---
+
+## Docker Compose
+
+```bash
+docker compose up --build
+```
+
+Stop:
+
+```bash
+docker compose down
+```
 
 ---
 
@@ -104,66 +241,74 @@ Answer
 
 ### Upload Document
 
+```http
 POST /api/documents/upload
-
-Uploads a PDF document and generates embeddings for document chunks.
+```
 
 ### Ask Question
 
+```http
 POST /api/documents/question
+```
 
-Accepts a document identifier and a natural language question, retrieves relevant chunks using pgvector similarity search, and generates an answer using Gemini.
+Request:
 
-### Swagger UI
+```json
+{
+  "documentId": "document-id",
+  "question": "What is this document about?"
+}
+```
 
-GET /swagger-ui/index.html
+Response:
 
-Interactive API documentation.
-
----
-
-## Configuration
-
-The application uses environment variables for sensitive configuration.
-
-Required variables:
-
-SPRING_DATASOURCE_URL
-
-SPRING_DATASOURCE_USERNAME
-
-SPRING_DATASOURCE_PASSWORD
-
-GEMINI_API_KEY
-
+```json
+{
+  "answer": "Generated AI response"
+}
+```
 
 ---
 
-## Running Locally
+## Future Enhancements
 
-Build the application:
-
-mvn clean package -DskipTests
-
-Run using Docker Compose:
-
-docker compose up --build
-
-Access Swagger:
-
-http://localhost:8080/swagger-ui/index.html
+- Multi-document support
+- Chat history
+- User authentication
+- Document management dashboard
+- Streaming AI responses
+- Cloud deployment
+- Source citations
+- Multi-model support
 
 ---
 
-## Current Capabilities
+## Learning Outcomes
 
-* PDF ingestion
-* Document chunking
-* Embedding generation
-* Vector storage with pgvector
-* Semantic search
-* Retrieval-Augmented Generation (RAG)
-* Dockerized deployment
-* Docker Compose orchestration
+This project demonstrates:
 
+- Full Stack Development
+- REST API Design
+- Spring Boot Development
+- Vector Databases
+- Retrieval-Augmented Generation (RAG)
+- LLM Integration
+- React + TypeScript
+- Docker Containerization
+- PostgreSQL + pgvector
+- Production-style application architecture
 
+---
+
+## Author
+
+**Vinod**
+
+GitHub:
+https://github.com/vinod-developer
+
+---
+
+## License
+
+This project is created for learning and portfolio purposes.
