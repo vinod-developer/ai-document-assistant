@@ -121,15 +121,15 @@ AI Answer
 
 ### Home Page
 
-_Add screenshot here_
+![Home](screenshots/home-page.jpg)
 
 ### Upload Document
 
-_Add screenshot here_
+![Upload](screenshots/upload-success.jpg)
 
-### Ask Questions
+### Ask Questions and get answer
 
-_Add screenshot here_
+![AI Answer](screenshots/ai-answer.jpg)
 
 ---
 
@@ -166,7 +166,7 @@ cd ai-document-assistant/backend
 ### Configure Environment Variables
 
 ```bash
-GEMINI_API_KEY=your-api-key
+GEMINI_API_KEY=<your-api-key>
 ```
 
 ### Run Application
@@ -268,8 +268,6 @@ Response:
 }
 ```
 
----
-
 ## Future Enhancements
 
 - Multi-document support
@@ -277,15 +275,12 @@ Response:
 - User authentication
 - Document management dashboard
 - Streaming AI responses
-- Cloud deployment
 - Source citations
 - Multi-model support
 
 ---
 
-## Learning Outcomes
-
-This project demonstrates:
+## Key Technologies & Concepts
 
 - Full Stack Development
 - REST API Design
@@ -296,19 +291,17 @@ This project demonstrates:
 - React + TypeScript
 - Docker Containerization
 - PostgreSQL + pgvector
-- Production-style application architecture
+- Production Deployment (Railway & Vercel)
+- Semantic Search
+
+---
+
+## Live Demo
+
+https://ai-document-assistant-ui.vercel.app/
 
 ---
 
 ## Author
 
-**Vinod**
-
-GitHub:
-https://github.com/vinod-developer
-
----
-
-## License
-
-This project is created for learning and portfolio purposes.
+**Vinod Allam**
