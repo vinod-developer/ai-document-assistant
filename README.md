@@ -304,11 +304,12 @@ https://ai-document-assistant-ui.vercel.app/
 ## Demo Videos
 
 ### 🎥 English Demo
-[demos/english-demo.mp4](demos/english-demo.mp4)
 
-### 🎥 Deutsche Demo 🇩🇪
-[demos/german-demo.mp4](demos/german-demo.mp4)
+[![](screenshots/demo-thumbnail.png)](https://youtu.be/pPRgGOBTo_E)
 
+### 🎥 German Demo
+
+[![](screenshots/demo-thumbnail.png)](https://youtu.be/O0I5_4qwq4A)
 ---
 
 ## Author
